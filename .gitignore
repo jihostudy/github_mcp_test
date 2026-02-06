@@ -1,0 +1,8 @@
+_docs
+
+# dependencies and build
+node_modules
+.pnpm-store
+.next
+out
+*.tsbuildinfo
