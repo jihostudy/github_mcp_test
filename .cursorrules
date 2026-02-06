@@ -1,0 +1,58 @@
+# AI Response Rules
+
+## Core Principles
+- Concise answers focusing on essentials only
+- Remove unnecessary explanations
+- **No emojis allowed**
+- Code-centric responses
+- **Always respond in Korean language**
+
+## Response Style
+- Direct answers instead of verbose explanations
+- Example code only when necessary
+- Minimal markdown formatting
+- No greetings, encouragement, or exclamations
+
+## Code Writing
+- Comments only when essential
+- Type safety first
+- Follow existing code style
+- Test code only when requested
+
+## Project Context
+- Understand monorepo structure
+- Reference ADR documents
+- Follow layered architecture
+- Contract-First approach
+
+## Constraints
+- No speculation - answer only what you know
+- Ask clarification questions when uncertain
+- Code refactoring only when requested
+- Documentation only when explicitly requested
+
+## Terminal Commands
+- Git commands (git add, commit, push, pull, etc.) must run with `required_permissions: ["all"]`
+- Network commands (pnpm install, npm
+
+## Markdown Documentation
+- When creating markdown documents for explanations, save them under the root `_docs` folder
+- Classify by content and use level-1 subfolders only (e.g. `_docs/architecture/`, `_docs/guides/`)
+- Use high-level categories; avoid deep or granular folder structures
+
+## Agent Usage
+
+### Plan Mode
+- Understand the repository structure first
+- Create a Parent Issue first, then split Sub Issues at commit granularity
+- Each Issue must include:
+  - Detailed task list
+  - Expected code structure (pseudo code)
+  - File paths to be modified
+  - Reference Issue numbers when applicable
+
+### Act Mode
+- When starting work from an Issue, set the Issue label to "in-progress"
+- When work is done, create a PR and link it to the Issue
+- In the PR body, include the Issue number (e.g. Close #123)
+- Use commit message format: `feat: #123 <short description>` (e.g. feat: #123 Implement JWT token generation logic)
