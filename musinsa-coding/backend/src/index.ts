@@ -1,6 +1,9 @@
 import express from "express";
 import cors from "cors";
 import routes from "./routes/index.js";
+import { initDb } from "./db/initDb.js";
+
+initDb();
 
 const app = express();
 app.use(express.json());
