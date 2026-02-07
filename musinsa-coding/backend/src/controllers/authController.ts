@@ -44,3 +44,46 @@ export async function login(req: Request, res: Response): Promise<void> {
     throw err;
   }
 }
+
+export function refreshToken(req: Request, res: Response): void {
+  const rawToken = req.cookies?.[REFRESH_COOKIE_NAME];
+  if (!rawToken) {
+    res.status(401).json({ error: "리프레시 토큰이 필요합니다" });
+    return;
+  }
+
+  try {
+    const tokens = authService.refresh(rawToken);
+    res.cookie(REFRESH_COOKIE_NAME, tokens.refreshToken, COOKIE_OPTIONS);
+    res.json({ accessToken: tokens.accessToken });
+  } catch (err) {
+    res.clearCookie(REFRESH_COOKIE_NAME, { path: "/api/auth" });
+    if (err instanceof authService.AuthError) {
+      res.status(err.status).json({ error: err.message });
+      return;
+    }
+    throw err;
+  }
+}
+
+export function logout(req: Request, res: Response): void {
+  const rawToken = req.cookies?.[REFRESH_COOKIE_NAME];
+  if (rawToken) {
+    authService.logout(rawToken);
+  }
+  res.clearCookie(REFRESH_COOKIE_NAME, { path: "/api/auth" });
+  res.json({ message: "로그아웃 되었습니다" });
+}
+
+export function me(req: Request, res: Response): void {
+  try {
+    const user = authService.getMe(req.userId!);
+    res.json(user);
+  } catch (err) {
+    if (err instanceof authService.AuthError) {
+      res.status(err.status).json({ error: err.message });
+      return;
+    }
+    throw err;
+  }
+}

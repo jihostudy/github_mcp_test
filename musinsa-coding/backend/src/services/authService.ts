@@ -64,6 +64,72 @@ export async function login(
   };
 }
 
+export function refresh(
+  rawToken: string,
+): { accessToken: string; refreshToken: string } {
+  const oldHash = hashToken(rawToken);
+  const row = tokenRepo.findByTokenHash(oldHash);
+
+  // 토큰이 없으면 무효
+  if (!row) {
+    throw new AuthError("유효하지 않은 리프레시 토큰입니다");
+  }
+
+  // 이미 폐기된 토큰이 재사용됨 → token family detection
+  if (row.revoked_at) {
+    tokenRepo.revokeAllForUser(row.user_id);
+    throw new AuthError("토큰이 재사용 감지되었습니다. 다시 로그인해주세요");
+  }
+
+  // 만료 확인
+  if (new Date(row.expires_at) < new Date()) {
+    tokenRepo.revoke(oldHash);
+    throw new AuthError("리프레시 토큰이 만료되었습니다");
+  }
+
+  // 기존 토큰 폐기
+  tokenRepo.revoke(oldHash);
+
+  // 유저 확인
+  const user = userRepo.findById(row.user_id);
+  if (!user) {
+    throw new AuthError("유저를 찾을 수 없습니다");
+  }
+
+  // 새 토큰 발급
+  const accessToken = signAccessToken({
+    sub: user.id,
+    nickname: user.nickname,
+  });
+  const newRefreshToken = generateRefreshToken();
+  const newHash = hashToken(newRefreshToken);
+  const expiresAt = new Date(
+    Date.now() + REFRESH_TOKEN_EXPIRES_MS,
+  ).toISOString();
+
+  tokenRepo.save(user.id, newHash, expiresAt);
+
+  return { accessToken, refreshToken: newRefreshToken };
+}
+
+export function logout(rawToken: string): void {
+  const tokenHash = hashToken(rawToken);
+  tokenRepo.revoke(tokenHash);
+}
+
+export function getMe(userId: number): UserPublic {
+  const user = userRepo.findById(userId);
+  if (!user) {
+    throw new AuthError("유저를 찾을 수 없습니다");
+  }
+  return {
+    id: user.id,
+    email: user.email,
+    nickname: user.nickname,
+    created_at: user.created_at,
+  };
+}
+
 // Custom error classes
 export class ConflictError extends Error {
   readonly status = 409;
