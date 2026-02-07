@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   header,
   headerInner,
@@ -16,7 +17,9 @@ export default function Header() {
   return (
     <header className={header}>
       <div className={headerInner}>
-        <span className={logo}>MUSINSA</span>
+        <Link href="/" style={{ textDecoration: "none" }}>
+          <span className={logo}>MUSINSA</span>
+        </Link>
 
         <div className={searchBar}>
           <svg
@@ -54,7 +57,7 @@ export default function Header() {
           </button>
 
           {/* 마이페이지 */}
-          <button className={iconButton} aria-label="마이페이지">
+          <Link href="/my" className={iconButton} aria-label="마이페이지">
             <svg
               className={iconSvg}
               viewBox="0 0 24 24"
@@ -65,7 +68,7 @@ export default function Header() {
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
               <circle cx="12" cy="7" r="4" />
             </svg>
-          </button>
+          </Link>
         </div>
       </div>
     </header>
