@@ -33,6 +33,13 @@ export interface NavTab {
   href: string;
 }
 
+export interface CartItem {
+  id: number;
+  product: Product;
+  quantity: number;
+  selectedOption: string;
+}
+
 // ── 마이페이지 타입 ──
 
 export interface UserProfile {
