@@ -6,8 +6,26 @@ import { getDb } from "./client.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SCHEMA_PATH = path.resolve(__dirname, "../../db/schema.sql");
 
+function migrate(): void {
+  const db = getDb();
+
+  const alterStatements = [
+    "ALTER TABLE users ADD COLUMN failed_login_attempts INTEGER NOT NULL DEFAULT 0",
+    "ALTER TABLE users ADD COLUMN locked_until TIMESTAMP",
+  ];
+
+  for (const sql of alterStatements) {
+    try {
+      db.exec(sql);
+    } catch {
+      // Column already exists — safe to ignore
+    }
+  }
+}
+
 export function initDb(): void {
   const schema = fs.readFileSync(SCHEMA_PATH, "utf-8");
   const db = getDb();
   db.exec(schema);
+  migrate();
 }
