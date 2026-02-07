@@ -28,4 +28,19 @@ export function initDb(): void {
   const db = getDb();
   db.exec(schema);
   migrate();
+  scheduleTokenCleanup();
+}
+
+function scheduleTokenCleanup(): void {
+  const CLEANUP_INTERVAL = 60 * 60 * 1000; // 1시간
+  setInterval(() => {
+    try {
+      const db = getDb();
+      db.prepare(
+        "DELETE FROM refresh_tokens WHERE expires_at < CURRENT_TIMESTAMP OR revoked_at IS NOT NULL",
+      ).run();
+    } catch {
+      // cleanup 실패는 무시
+    }
+  }, CLEANUP_INTERVAL);
 }

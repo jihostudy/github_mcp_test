@@ -6,7 +6,11 @@ import {
   generateRefreshToken,
   hashToken,
 } from "../utils/jwt.js";
-import { REFRESH_TOKEN_EXPIRES_MS } from "../config/auth.js";
+import {
+  REFRESH_TOKEN_EXPIRES_MS,
+  MAX_FAILED_ATTEMPTS,
+  LOCKOUT_DURATION_MS,
+} from "../config/auth.js";
 import type { UserPublic, TokenPair } from "../types/auth.js";
 
 export async function register(
@@ -37,9 +41,31 @@ export async function login(
     throw new AuthError("닉네임 또는 비밀번호가 올바르지 않습니다");
   }
 
+  // Account Lockout 확인
+  if (user.locked_until && new Date(user.locked_until) > new Date()) {
+    throw new AuthError("계정이 잠겨있습니다. 잠시 후 다시 시도해주세요");
+  }
+
   const valid = await verifyPassword(user.password_hash, password);
   if (!valid) {
+    // 실패 횟수 증가
+    userRepo.incrementFailedAttempts(user.id);
+    const newAttempts = user.failed_login_attempts + 1;
+
+    // 최대 시도 초과 시 계정 잠금
+    if (newAttempts >= MAX_FAILED_ATTEMPTS) {
+      const lockedUntil = new Date(
+        Date.now() + LOCKOUT_DURATION_MS,
+      ).toISOString();
+      userRepo.lockAccount(user.id, lockedUntil);
+    }
+
     throw new AuthError("닉네임 또는 비밀번호가 올바르지 않습니다");
+  }
+
+  // 로그인 성공: 실패 카운터 리셋
+  if (user.failed_login_attempts > 0) {
+    userRepo.resetFailedAttempts(user.id);
   }
 
   // 토큰 발급
