@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "@/styles/global.css.ts";
 import Header from "@/components/layout/Header";
+import TabNavigation from "@/components/layout/TabNavigation";
 
 export const metadata: Metadata = {
   title: "Musinsa",
@@ -16,6 +17,7 @@ export default function RootLayout({
     <html lang="ko">
       <body>
         <Header />
+        <TabNavigation />
         {children}
       </body>
     </html>
