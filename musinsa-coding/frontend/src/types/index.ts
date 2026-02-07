@@ -32,3 +32,10 @@ export interface NavTab {
   label: string;
   href: string;
 }
+
+export interface CartItem {
+  id: number;
+  product: Product;
+  quantity: number;
+  selectedOption: string;
+}
