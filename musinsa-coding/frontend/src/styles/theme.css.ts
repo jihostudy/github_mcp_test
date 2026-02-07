@@ -1,50 +1,49 @@
-import {
-  createGlobalTheme,
-  createGlobalThemeContract,
-} from "@vanilla-extract/css";
+import { createGlobalTheme, createVar } from "@vanilla-extract/css";
 
-export const vars = createGlobalThemeContract({
+const createThemeVars = () => ({
   color: {
-    black: null,
-    white: null,
-    gray100: null,
-    gray200: null,
-    gray300: null,
-    gray400: null,
-    gray500: null,
-    gray600: null,
-    gray700: null,
-    gray800: null,
-    gray900: null,
-    red: null,
-    primary: null,
-    bg: null,
-    border: null,
-    textPrimary: null,
-    textSecondary: null,
-    textTertiary: null,
+    black: createVar(),
+    white: createVar(),
+    gray100: createVar(),
+    gray200: createVar(),
+    gray300: createVar(),
+    gray400: createVar(),
+    gray500: createVar(),
+    gray600: createVar(),
+    gray700: createVar(),
+    gray800: createVar(),
+    gray900: createVar(),
+    red: createVar(),
+    primary: createVar(),
+    bg: createVar(),
+    border: createVar(),
+    textPrimary: createVar(),
+    textSecondary: createVar(),
+    textTertiary: createVar(),
   },
   font: {
-    body: null,
+    body: createVar(),
   },
   space: {
-    xs: null,
-    sm: null,
-    md: null,
-    lg: null,
-    xl: null,
-    xxl: null,
+    xs: createVar(),
+    sm: createVar(),
+    md: createVar(),
+    lg: createVar(),
+    xl: createVar(),
+    xxl: createVar(),
   },
   radius: {
-    sm: null,
-    md: null,
-    lg: null,
-    full: null,
+    sm: createVar(),
+    md: createVar(),
+    lg: createVar(),
+    full: createVar(),
   },
-  headerHeight: null,
-  tabHeight: null,
-  maxWidth: null,
+  headerHeight: createVar(),
+  tabHeight: createVar(),
+  maxWidth: createVar(),
 });
+
+export const vars = createThemeVars();
 
 createGlobalTheme(":root", vars, {
   color: {

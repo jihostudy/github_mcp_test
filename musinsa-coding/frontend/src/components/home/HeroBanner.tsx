@@ -22,7 +22,7 @@ export default function HeroBanner() {
   const [isDragging, setIsDragging] = useState(false);
   const startX = useRef(0);
   const deltaX = useRef(0);
-  const autoPlayRef = useRef<ReturnType<typeof setInterval>>();
+  const autoPlayRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const total = mockBanners.length;
 
   const goTo = useCallback(
