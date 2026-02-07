@@ -6,3 +6,7 @@ node_modules
 .next
 out
 *.tsbuildinfo
+
+# database
+*.db
+*.sqlite
